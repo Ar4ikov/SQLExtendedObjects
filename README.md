@@ -13,7 +13,7 @@
 
 ### Установка
 ```console
-root@Ar4ikov:~$ pip install sql_extended_objects
+root@Ar4ikov:~$ pip install SQLExtendedObjects
 ```
 
 ###Коротко о функционале
