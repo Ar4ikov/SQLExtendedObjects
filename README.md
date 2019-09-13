@@ -16,7 +16,7 @@
 root@Ar4ikov:~$ pip install SQLExtendedObjects
 ```
 
-###Коротко о функционале
+### Коротко о функционале
 
 - Создание класса, который будет отвечать за ряд в таблице.
 ```python
@@ -121,7 +121,7 @@ database = ExtRequests("database.db")
 users = database.select_all("my_table", User)
 this_user = database.utils.get(users, id=1)
 
-# Обвноление атрибутов у всех классов
+# Обновление атрибутов у всех классов
 users = database.utils.update_all(users, age=17)
 
 # Удаление всех классов из списка и из таблицы
