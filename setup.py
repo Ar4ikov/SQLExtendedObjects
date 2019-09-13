@@ -16,6 +16,7 @@ setup(
     version=__version__,
     install_requires=[],
     long_description=readme,
+    long_description_content_type="text/markdown",
     packages=["sql_extended_objects"],
     package_data={"sql_extended_objects": ["version"]},
     url="https://github.com/Ar4ikov/SQLExtendedObjects",

@@ -141,7 +141,7 @@ class ExtRequests:
 
         return self.cursor.execute(sql)
 
-    def select_all(self, table_name, cls, where=None) -> List[ExtObject]:
+    def select_all(self, table_name, cls, where=None, limit=None) -> List[ExtObject]:
         """
         Возвращает список с классами при полной выборке элементов
 
@@ -151,10 +151,15 @@ class ExtRequests:
         :return: List[None] или List[ExtObject] - классами наследниками
         """
 
-        if not where:
+        if not where and not limit:
             where = """SELECT * FROM `{table_name}`;""".format(table_name=table_name)
-        else:
+        elif not limit:
             where = """SELECT * FROM `{table_name}` WHERE {where};""".format(table_name=table_name, where=where)
+        elif not where:
+            where = """SELECT * FROM `{table_name}` LIMIT {limit};""".format(table_name=table_name, limit=limit)
+        else:
+            where = """SELECT * FROM `{table_name}` WHERE {where} LIMIT {limit};""".format(table_name=table_name,
+                                                                                           where=where, limit=limit)
 
         query = self.cursor.execute(where).fetchall()
         table_structure = self.cursor.execute("""PRAGMA table_info(`{}`)""".format(table_name)).fetchall()
