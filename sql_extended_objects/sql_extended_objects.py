@@ -141,25 +141,50 @@ class ExtRequests:
 
         return self.cursor.execute(sql)
 
-    def select_all(self, table_name, cls, where=None, limit=None) -> List[ExtObject]:
+    def select_all(self, table_name, cls, where=None, limit=None, order_by=None, desc=False) -> List[ExtObject]:
         """
         Возвращает список с классами при полной выборке элементов
 
         :param table_name: имя таблицы
         :param cls: класс, в который надо подгрузить ряды в таблице
         :param where: точное указание ряда, который нам нужен по параметру (например `id`=1)
+        :param limit: ограничение по числу
+        :param order_by: сортировка по значению
+        :param desc: реверсивная сортировка
         :return: List[None] или List[ExtObject] - классами наследниками
         """
 
-        if not where and not limit:
+        if not where and not limit and not order_by:
             where = """SELECT * FROM `{table_name}`;""".format(table_name=table_name)
-        elif not limit:
+        elif not limit and not order_by:
             where = """SELECT * FROM `{table_name}` WHERE {where};""".format(table_name=table_name, where=where)
-        elif not where:
+        elif not where and not order_by:
             where = """SELECT * FROM `{table_name}` LIMIT {limit};""".format(table_name=table_name, limit=limit)
-        else:
+        elif not where and not order_by:
+            where = """SELECT * FROM `{table_name}` ORDER BY {order_by}{desc};""".format(table_name=table_name, order_by=order_by,
+                                                                                         desc=" DESC" if desc else "")
+        elif where and limit:
             where = """SELECT * FROM `{table_name}` WHERE {where} LIMIT {limit};""".format(table_name=table_name,
                                                                                            where=where, limit=limit)
+        elif where and order_by:
+            where = """SELECT * FROM `{table_name}` WHERE {where} ORDER BY {order_by}{desc};""".format(
+                table_name=table_name,
+                where=where,
+                order_by=order_by,
+                desc=" DESC" if desc else "")
+        elif order_by and limit:
+            where = """SELECT * FROM `{table_name}` ORDER BY {order_by}{desc} LIMIT {limit};""".format(
+                table_name=table_name,
+                order_by=order_by,
+                limit=limit,
+                desc=" DESC" if desc else "")
+        else:
+            where = """SELECT * FROM `{table_name}` WHERE {where} ORDER BY {order_by}{desc} LIMIT {limit};""".format(
+                table_name=table_name,
+                where=where,
+                order_by=order_by,
+                limit=limit,
+                desc=" DESC" if desc else "")
 
         query = self.cursor.execute(where).fetchall()
         table_structure = self.cursor.execute("""PRAGMA table_info(`{}`)""".format(table_name)).fetchall()
